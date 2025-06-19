@@ -11,21 +11,20 @@ app.set("view engine", "ejs");
 app.set("views", "views");
 
 // Route imports
-const adminData = require("./routes/admin");
+const adminRoutes = require("./routes/admin");
 const shopRoutes = require("./routes/shop");
 
 // Middleware
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));
+const errorController = require("./controllers/error");
 
 // Routes
-app.use("/admin", adminData.routes);
+app.use("/admin", adminRoutes);
 app.use(shopRoutes);
 
 // 404 handler
-app.use((req, res, next) => {
-  res.status(404).render("404", { pageTitle: "Page Not Found" });
-});
+app.use(errorController.get404);
 
 // Start server
 app.listen(3000);
