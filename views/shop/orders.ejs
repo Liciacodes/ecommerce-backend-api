@@ -10,12 +10,12 @@
             <% } else { %>
             <ul class="orders">
                 <% orders.forEach(order => { %>
-                <li>
-                    <h1># <%= order._id %></h1>
+                <li class="orders__item">
+                    <h1>Order - # <%= order._id %></h1>
                     <ul>
-                        <% order.items.forEach(product => { %>
-                        <li>
-                            <%= product.title %> (product.quantity %>)
+                        <% order.products.forEach(p => { %>
+                        <li class="orders__products-item">
+                            <%= p.product.title %> (<%=p.quantity %>)
                             
                         </li>
                         <% }) %>
