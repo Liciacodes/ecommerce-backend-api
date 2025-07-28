@@ -1,7 +1,6 @@
 const path = require("path");
 
 const express = require("express");
-
 const bodyParser = require("body-parser");
 
 const errorController = require("./controllers/error");
@@ -15,6 +14,8 @@ const authRoutes = require("./routes/auth");
 const { default: mongoose } = require("mongoose");
 const session = require("express-session");
 const MongoDBStore = require("connect-mongodb-session")(session);
+const csrf = require('csurf')
+const flash = require('connect-flash')
 const cookieParser = require("cookie-parser");
 
 const MONGODB_URI =
@@ -25,6 +26,7 @@ const store = new MongoDBStore({
   uri: MONGODB_URI,
   collections: "sessions",
 });
+const csrfProtection = csrf()
 
 // Set up Handlebars view engine
 app.set("view engine", "ejs");
@@ -33,6 +35,7 @@ app.set("views", "views");
 // Middleware
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));
+app.use(cookieParser());
 app.use(
   session({
     secret: "my secret",
@@ -41,9 +44,13 @@ app.use(
     store: store,
   })
 );
+app.use(csrfProtection)
+app.use(flash())
+
+
 
 app.use((req,res, next) => {
-  if (!req.session.user) {
+  if (!req.session.user || !req.session.user._id) {
     return next()
   }
   User.findById(req.session.user._id)
@@ -55,12 +62,18 @@ app.use((req,res, next) => {
   .catch(err => console.log(err))
 })
 
+app.use((req, res, next) => {
+  res.locals.csrfToken = req.csrfToken();
+  res.locals.isAuthenticated = req.session.isLoggedIn;
+  next();
+});
+
 
 // Routes
 app.use("/admin", adminRoutes);
 app.use(shopRoutes);
 app.use(authRoutes);
-app.use(cookieParser());
+
 
 // 404 handler
 app.use(errorController.get404);
