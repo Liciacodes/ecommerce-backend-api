@@ -31,6 +31,7 @@
     "connect-mongodb-session": "^5.0.0",
     "cookie-parser": "^1.4.7",
     "csurf": "^1.11.0",
+    "dotenv": "^17.2.1",
     "ejs": "^3.1.10",
     "express": "^5.1.0",
     "express-handlebars": "3.0",
@@ -38,6 +39,8 @@
     "mongodb": "^6.17.0",
     "mongoose": "^8.16.3",
     "mysql2": "^3.14.1",
+    "nodemailer": "^7.0.5",
+    "nodemailer-sendgrid-transport": "^0.2.0",
     "pug": "^3.0.3",
     "sequelize": "^6.37.7"
   }
