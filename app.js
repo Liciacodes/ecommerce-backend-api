@@ -1,3 +1,5 @@
+
+require('dotenv').config()
 const path = require("path");
 
 const express = require("express");
@@ -18,12 +20,11 @@ const csrf = require('csurf')
 const flash = require('connect-flash')
 const cookieParser = require("cookie-parser");
 
-const MONGODB_URI =
-  "mongodb+srv://felz:udosenfelicia@cluster0.bqgm6cv.mongodb.net/shop";
+
 
 const app = express();
 const store = new MongoDBStore({
-  uri: MONGODB_URI,
+  uri: process.env.MONGODB_URI,
   collections: "sessions",
 });
 const csrfProtection = csrf()
@@ -79,7 +80,7 @@ app.use(authRoutes);
 app.use(errorController.get404);
 
 mongoose
-  .connect(MONGODB_URI)
+  .connect(process.env.MONGODB_URI)
   .then((result) => {
     app.listen(3000);
   })
