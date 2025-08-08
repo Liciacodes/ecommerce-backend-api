@@ -22,9 +22,8 @@ exports.getLogin = (req, res, next) => {
     pageTitle: "Login",
     errorMessage: errorMessage,
     oldInput: {
-        email: email,
-        password: password,
-        
+        email: '',
+        password: '',
       },
     validationErrors: [],
   });
@@ -54,7 +53,7 @@ exports.postLogin = (req, res, next) => {
   const email = req.body.email;
   const password = req.body.password;
 
-  const errors = validationResult();
+  const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(422).render("auth/login", {
       path: "/login",
@@ -78,7 +77,7 @@ exports.postLogin = (req, res, next) => {
             email: email,
             password: password,
           },
-          validationErrors: [],
+          validationErrors: [{path: 'email', path: 'password'}],
         });
       }
       bcrypt
