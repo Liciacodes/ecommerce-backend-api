@@ -40,7 +40,7 @@ if (!errors.isEmpty()) {
 }
 
   const product = new Product({
-    _id: new mongoose.Types.ObjectId('687a41954e0000c6a4ea6272'),
+    // _id: new mongoose.Types.ObjectId('687a41954e0000c6a4ea6272'),
     title: title,
     price: price,
     description: description,
@@ -69,7 +69,10 @@ if (!errors.isEmpty()) {
       //   errorMessage: 'Database operation failed, please try again.',
       //   validationErrors: []
       // });
-      res.redirect('/500')
+      // res.redirect('/500')
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error)
     });
 };
 
@@ -94,7 +97,13 @@ exports.getEditProduct = (req, res, next) => {
         validationErrors: []
       });
     })
-    .catch(err => console.log(err));
+    .catch(err => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error)
+    }
+       
+    )
 };
 
 exports.postEditProduct = (req, res, next) => {
@@ -138,7 +147,9 @@ if (!errors.isEmpty()) {
     })
     })
     
-    .catch(err => console.log(err));
+    .catch(err => {
+         res.redirect('/500')
+    });
 };
 
 exports.getProducts = (req, res, next) => {
@@ -154,7 +165,11 @@ exports.getProducts = (req, res, next) => {
         
       });
     })
-    .catch(err => console.log(err));
+    .catch(err => {
+         const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error)
+    });
 };
 
 exports.postDeleteProduct = (req, res, next) => {
@@ -164,5 +179,9 @@ exports.postDeleteProduct = (req, res, next) => {
       console.log('DESTROYED PRODUCT');
       res.redirect('/admin/products');
     })
-    .catch(err => console.log(err));
+    .catch(err => {
+        const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error)
+    });
 };
