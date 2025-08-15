@@ -19,6 +19,7 @@ const MongoDBStore = require("connect-mongodb-session")(session);
 const csrf = require('csurf')
 const flash = require('connect-flash')
 const cookieParser = require("cookie-parser");
+const multer = require('multer')
 
 
 
@@ -29,12 +30,34 @@ const store = new MongoDBStore({
 });
 const csrfProtection = csrf()
 
+const fileStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'images')
+  },
+  filename: (req, file, cb) => {
+    cb(null, new Date().toISOString() + '-' + file.originalname)
+  }
+})
+
+
+const fileFilter = (req, file, cb) => {
+  if (file.mimetype === 'image/png' || file.mimetype === 'image/jpg' || file.mimetype === 'image/jpeg') {
+cb(null, true)
+  } else {
+cb(null, false)
+  }
+
+
+}
+
 // Set up Handlebars view engine
 app.set("view engine", "ejs");
 app.set("views", "views");
 
 // Middleware
+app.use(multer({ storage: fileStorage, fileFilter: fileFilter }).single('image'))
 app.use(bodyParser.urlencoded({ extended: false }));
+
 app.use(express.static(path.join(__dirname, "public")));
 app.use(cookieParser());
 app.use(
@@ -96,7 +119,7 @@ app.use((error, req, res, next) => {
    res.status(500).render('500',{
      pageTitle: "Error!",
       path: "/500",
-      isAuthenticated: req.session.isLoggedIn,
+      isAuthenticated: req.session._id,
   })
 })
 

@@ -15,9 +15,10 @@ exports.getAddProduct = (req, res, next) => {
 
 exports.postAddProduct = (req, res, next) => {
   const title = req.body.title;
-  const imageUrl = req.body.imageUrl;
+  const imageUrl = req.file;
   const price = req.body.price;
   const description = req.body.description;
+  console.log('Multer file object:',imageUrl)
   const errors = validationResult(req)
 
 if (!errors.isEmpty()) {
@@ -32,7 +33,6 @@ if (!errors.isEmpty()) {
           imageUrl: imageUrl,
           price: price,
           description: description,
-         
         },
         errorMessage: errors.array()[0].msg,
         validationErrors: errors.array()
@@ -40,7 +40,7 @@ if (!errors.isEmpty()) {
 }
 
   const product = new Product({
-    // _id: new mongoose.Types.ObjectId('687a41954e0000c6a4ea6272'),
+    _id: new mongoose.Types.ObjectId('687a41954e0000c6a4ea6272'),
     title: title,
     price: price,
     description: description,
